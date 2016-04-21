@@ -4,23 +4,31 @@ DEVICE ?= /dev/ttyACM0
 
 out/%.o:%.c
 	mkdir -p $(dir $@)
-	avr-gcc -o $@ -c $^ \
-		-std=c11 -mmcu=atmega328p -g -Os -DF_CPU=16000000ul
+	#avr-gcc -o $@ -c $^ \
+	#	-std=c11 -mmcu=atmega328p -g -Os -DF_CPU=16000000ul
+	gcc -o $@ -c $^ \
+		-std=c11 -g -Os
 
 out/%.o:%.cpp
 	mkdir -p $(dir $@)
-	avr-g++ -o $@ -c $^ \
+	#avr-g++ -o $@ -c $^ \
+	#	-ITFT_22_ILI9225 \
+	#	-mmcu=atmega328p -g -Os -DF_CPU=16000000ul
+	g++ -o $@ -c $^ \
 		-ITFT_22_ILI9225 \
-		-mmcu=atmega328p -g -Os -DF_CPU=16000000ul
+		-g -Os
 
 %.elf:
 	mkdir -p $(dir $@)
-	avr-gcc -o $@ $^ \
-		-std=c11 -mmcu=atmega328p -g -Os -DF_CPU=16000000ul
-	avr-objdump -d $@ > $(basename $@).s
+	#avr-gcc -o $@ $^ \
+	#	-std=c11 -mmcu=atmega328p -g -Os -DF_CPU=16000000ul
+	gcc -o $@ $^ \
+		-std=c11 -g -Os
+	#avr-objdump -d $@ > $(basename $@).s
 
 %.hex: %.elf
-	avr-objcopy -j .text -j .data -O ihex $< $@
+	#avr-objcopy -j .text -j .data -O ihex $< $@
+	touch $@
 
 .PHONY: flash
 flash: out/${TARGET}.hex

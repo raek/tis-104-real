@@ -1,8 +1,21 @@
 #ifndef TFT_22_ILI9225_h
 #define TFT_22_ILI9225_h
 
+#ifdef AVR
 #include <avr/pgmspace.h>
+#else
+#include <stdint.h>
+#endif
 #include <stdlib.h>
+
+#ifndef AVR
+void _delay_ms(uint8_t ms);
+
+
+uint8_t pgm_read_byte(void *adr) {
+    return 0;
+}
+#endif
 
 enum Direction {
 	INPUT,

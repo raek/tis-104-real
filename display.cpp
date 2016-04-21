@@ -1,6 +1,8 @@
 // Include application, user and local libraries
 #include <stdlib.h>
+#ifdef AVR
 #include <util/delay.h>
+#endif
 
 #include "TFT_22_ILI9225.h"
 
@@ -22,6 +24,7 @@ uint16_t random(uint16_t max) {
 
 int main() {
   tft.begin();
+  return 0;
 
   tft.drawRectangle(0, 0, tft.maxX() - 1, tft.maxY() - 1, COLOR_WHITE);
   tft.setFont(Terminal6x8);

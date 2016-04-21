@@ -1,9 +1,21 @@
+#ifdef AVR
 #include <util/delay.h>
+#else
+#include <cstdio>
+#include <inttypes.h>
+#endif
 #include <string.h>
 
 #include "TFT_22_ILI9225.h"
 
+#ifndef AVR
+void _delay_ms(uint8_t ms) {
+    printf("Delay %" PRIu8 " ms\n", ms);
+}
+#endif
+
 void pinMode(uint8_t pin, Direction dir) {
+#ifdef AVR
 	if (pin < 8) {
 		if (dir == INPUT) {
 			DDRD &= ~(1 << pin);
@@ -18,10 +30,12 @@ void pinMode(uint8_t pin, Direction dir) {
 			DDRB |= (1 << index);
 		}
 	}
+#endif
 }
 
 
 void digitalWrite(uint8_t pin, Level level) {
+#ifdef AVR
 	if (pin < 8) {
 		if (level == LOW) {
 			PORTD &= ~(1 << pin);
@@ -36,6 +50,7 @@ void digitalWrite(uint8_t pin, Level level) {
 			PORTB |= (1 << index);
 		}
 	}
+#endif
 }
 
 
@@ -426,6 +441,7 @@ void TFT_22_ILI9225::_swap(uint16_t &a, uint16_t &b) {
 }
 
 void TFT_22_ILI9225::_spiWriteByte(uint8_t byte) {
+#ifdef AVR
 	const uint8_t spi_delay = 1;
 	_delay_us(spi_delay);
 	for (int i = 0; i < 8; ++i) {
@@ -441,31 +457,40 @@ void TFT_22_ILI9225::_spiWriteByte(uint8_t byte) {
 		byte <<= 1;
 	}
 	_delay_us(spi_delay);
+#endif
 }
 
 
 // Utilities
 void TFT_22_ILI9225::_writeCommand(uint8_t HI, uint8_t LO) {
+#ifdef AVR
 	digitalWrite(_rs, LOW);
 	digitalWrite(_cs, LOW);
 	_spiWriteByte(HI);
 	_spiWriteByte(LO);
 	digitalWrite(_cs, HIGH);
+#endif
 }
 
 
 void TFT_22_ILI9225::_writeData(uint8_t HI, uint8_t LO) {
+#ifdef AVR
 	digitalWrite(_rs, HIGH);
 	digitalWrite(_cs, LOW);
 	_spiWriteByte(HI);
 	_spiWriteByte(LO);
 	digitalWrite(_cs, HIGH);
+#endif
 }
 
 
 void TFT_22_ILI9225::_writeRegister(uint16_t reg, uint16_t data) {
+#ifdef AVR
 	_writeCommand(reg >> 8, reg & 255);
 	_writeData(data >> 8, data & 255);
+#else
+    printf("writeRegister reg %04x data %04x\n", reg, data);
+#endif
 }
 
 
