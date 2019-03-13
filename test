@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-tup
-for f in tests/*_results.txt; do
-    echo "$f"
-    grep -hi fail "$f"
-    echo
-done
